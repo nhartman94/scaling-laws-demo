@@ -5,6 +5,16 @@ scaling-law extraction methods** from the Chinchilla paper ([Hoffmann et al.,
 2022](https://arxiv.org/abs/2203.15556)) on a synthetic problem you can run on a laptop: MLP
 **students of increasing size** trained on a **Gaussian teacher–student** task.
 
+### ▶ Run in Colab (no install)
+
+| notebook | open |
+|----------|------|
+| 1 — scaling laws | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/nhartman94/scaling-laws-demo/blob/main/notebooks/01_scaling_laws.ipynb) |
+| 2 — double descent | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/nhartman94/scaling-laws-demo/blob/main/notebooks/02_double_descent.ipynb) |
+
+Click a badge, then run the first **setup cell** — it clones this repo and installs the
+dependencies in the Colab runtime. Everything after that works as-is.
+
 A scaling law predicts how the achievable loss falls with compute[FLOPs] and,
 crucially, **how to split that compute** between model size `N` (parameters) and
 data `D` (examples). We count MLP compute cost as **`C = (6N − 2·d·w)·D`** (`d` = input
