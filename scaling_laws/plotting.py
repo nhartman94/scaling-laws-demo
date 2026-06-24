@@ -55,7 +55,10 @@ def plot_all_runs(agg: pd.DataFrame, irreducible: float | None = None):
         gd = g.sort_values("D")
         axes[0].plot(gd["D"], gd["val_loss"], "-o", ms=3, color=c, alpha=0.9)
         gc = g.sort_values("C")
-        axes[1].plot(gc["C"], gc["val_loss"], "-o", ms=3, color=c, alpha=0.9)
+        
+        raise NotImplementedError
+        axes[1].plot( ... )  # Q2a: YOUR CODE plot the val_loss vs. compute 
+
     for ax in axes:
         if irreducible is not None:
             ax.axhline(irreducible, ls=":", c="k", lw=1, label=f"irreducible  E={irreducible:g}")
@@ -91,9 +94,8 @@ def plot_envelope(agg: pd.DataFrame, env: EnvelopeResult, irreducible: float | N
     axes[1].set_xscale("log"); axes[1].set_yscale("log")
     axes[1].set_xlabel("C"); axes[1].set_ylabel(r"$N^\star$"); axes[1].legend(frameon=False)
 
-    axes[2].plot(C, env.frontier["D"], "o", c="seagreen")
-    axes[2].plot(C, env.D_star(C), "--", c="seagreen",
-                 label=rf"$D^\star\!\propto C^{{{env.a_D:.3f}}}$")
+    # Q3: Your code here
+    print("Q3: NEED TO IMPLEMENT")
     axes[2].set_xscale("log"); axes[2].set_yscale("log")
     axes[2].set_xlabel("C"); axes[2].set_ylabel(r"$D^\star$"); axes[2].legend(frameon=False)
     fig.tight_layout()
@@ -144,14 +146,21 @@ def plot_parametric(agg: pd.DataFrame, par: ParametricResult, irreducible: float
     NN, DD = np.meshgrid(Ng, Dg)
     Z = par.loss(NN, DD)
     ax = axes[0]
-    pc = ax.pcolormesh(Ng, Dg, Z, shading="auto", cmap="magma_r")
-    ax.scatter(agg["N"], agg["D"], s=18, facecolors="none", edgecolors="w", lw=0.8)
+    # one shared color scale spanning both the surface and the points
+    vmin = min(Z.min(), agg["val_loss"].min())
+    vmax = max(Z.max(), agg["val_loss"].max())
+    norm = mcolors.LogNorm(vmin=vmin, vmax=vmax)
+    # pc = ax.pcolormesh(Ng, Dg, Z, shading="auto", cmap="magma_r", norm=norm)
+    sc = ax.scatter(agg["N"], agg["D"], s=18,
+               c=agg["val_loss"], cmap="magma_r", norm=norm,
+               edgecolors="w", lw=0.8)
     Cl = np.geomspace(agg["C"].min(), agg["C"].max(), 50)
     ax.plot(par.N_star(Cl), par.D_star(Cl), c="cyan", lw=2, label="compute-optimal locus")
     ax.set_xscale("log"); ax.set_yscale("log")
     ax.set_xlim(Ng.min(), Ng.max()); ax.set_ylim(Dg.min(), Dg.max())   # no margin around the mesh
     ax.set_xlabel("N (params)"); ax.set_ylabel("D (examples)")
-    ax.legend(frameon=False); plt.colorbar(pc, ax=ax, label="predicted loss")
+    ax.legend(frameon=False); 
+    plt.colorbar(sc, ax=ax, label="predicted loss")
 
     pred = par.loss(agg["N"].values, agg["D"].values)
     ax2 = axes[1]
@@ -160,11 +169,7 @@ def plot_parametric(agg: pd.DataFrame, par: ParametricResult, irreducible: float
     ax2.plot(lim, lim, "k--", lw=1)
     ax2.set_xscale("log"); ax2.set_yscale("log")
     ax2.set_xlabel("measured loss"); ax2.set_ylabel("fitted loss")
-    if irreducible is not None:
-        txt = f"fitted  E = {par.E:.4f}\nknown   E = {irreducible:.4f}"
-        ax2.text(0.05, 0.95, txt, transform=ax2.transAxes, va="top", ha="left",
-                 family="monospace", fontsize=10,
-                 bbox=dict(boxstyle="round", fc="white", ec="0.7"))
+    
     fig.tight_layout()
     return fig
 
